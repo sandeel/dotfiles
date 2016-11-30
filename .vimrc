@@ -1,103 +1,115 @@
-set nocompatible              " be iMproved, required
-filetype off                  " required
+call plug#begin()
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
+" Make sure you use single quotes
 
-" let Vundle manage Vundle, required
-Plugin 'gmarik/Vundle.vim'
+Plug 'vimwiki/vimwiki'
+Plug 'tpope/vim-sensible'
+Plug 'freeo/vim-kalisi'
+Plug 'vim-airline/vim-airline'
+Plug 'sjl/badwolf'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'mhartington/oceanic-next'
+Plug 'Shougo/neocomplete'
+Plug 'Shougo/neosnippet'
+Plug 'Shougo/neosnippet-snippets'
+Plug 'scrooloose/nerdtree'
+Plug 'tpope/vim-fugitive'
+Plug 'jistr/vim-nerdtree-tabs'
+Plug 'klen/python-mode'
 
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'plasticboy/vim-markdown'
-" plugin from http://vim-scripts.org/vim/scripts.html
-"Plugin 'L9'
-" Git plugin not hosted on GitHub
-"Plugin 'git://git.wincent.com/command-t.git'
-" git repos on your local machine (i.e. when working on your own plugin)
-"Plugin 'file:///home/gmarik/path/to/plugin'
-" The sparkup vim script is in a subdirectory of this repo called vim.
-" Pass the path to set the runtimepath properly.
-"Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-" Avoid a name conflict with L9
-"Plugin 'user/L9', {'name': 'newL9'}
-
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
+" Add plugins to &runtimepath
+call plug#end()
 "
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+let g:neocomplete#enable_at_startup = 1
+let g:neosnippet#disable_runtime_snippets = {
+        \   '_' : 1,
+        \ }
+
+let g:vimwiki_list = [{'path':'~/shared/vimwiki'}]
+let g:vimwiki_url_maxsave = 0
+
+"setlocal foldmethod=syntax
+
+" set 256 colors
+colorscheme kalisi
+set background=dark
+
+syntax enable
+
+set encoding=utf-8
+
+" Powerline setup
+set laststatus=2
+set termencoding=utf-8
+" set guifont=Ubuntu\ Mono
+let g:Powerline_symbols = 'fancy'
+let g:airline_powerline_fonts = 1
+
+" Uncomment the following to have Vim jump to the last position when
+" reopening a file
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
+
+
+" swp files and history
+set noswapfile
+set undofile
+set undodir=~/.vim/undo//
+set undolevels=1000         " How many undos
+set undoreload=10000  
+
+
+" snippets
+" Plugin key-mappings.
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+" SuperTab like snippets behavior.
+"imap <expr><TAB>
+" \ pumvisible() ? "\<C-n>" :
+" \ neosnippet#expandable_or_jumpable() ?
+" \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 "
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
+" For conceal markers.
+if has('conceal')
+  set conceallevel=2 concealcursor=niv
+endif
 
-execute pathogen#infect() 
+" Tell Neosnippet about the other snippets
+let g:neosnippet#snippets_directory='/home/ubuntu/snippets'
 
-" vimwiki
-" make vimwiki use markdown syntax
-let g:vimwiki_list = [{'path': '~/vimwiki/',
-                     \ 'syntax': 'markdown', 'ext': '.md'}]
-augroup filetypedetect
-  au! BufRead,BufNewFile */vimwiki/*        set filetype=vimwiki
-augroup END
 
-function Diary()
-    :VimwikiDiaryIndex
-    :VimwikiDiaryGenerateLinks
-endfunction
-
-set paste
-
-set nocompatible
-
-set bs=2
-set ts=4
-set tw=1000000000
-
-set expandtab
-set tabstop=8
-set softtabstop=4
+" formatting
+filetype plugin indent on
+" show existing tab with 4 spaces width
+set tabstop=4
+" when indenting with '>', use 4 spaces width
 set shiftwidth=4
+" On pressing tab, insert 4 spaces
+set expandtab
+set conceallevel=0
 
-filetype plugin on
-
-set modeline
-
-syntax on
-
-set autoindent
-set showmatch
-set showmode
-set mousehide
-
-set nowrapscan
-set hlsearch
-set incsearch
-
-set fileencoding=utf8
-set encoding=utf8
-
-" hybrid line number mode
 set number
 set relativenumber
 
-" undoing
-set undofile
-set undodir=~/.vim/undo
+" yaml indentation
+au FileType yaml setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
 
-" folding for markdown
-let g:vim_markdown_folding_disabled=1
+" fix pasting
+set mouse=r
 
-"remove scratch preview
-set completeopt-=preview
+
+
+" Start NERDTree
+"autocmd VimEnter * NERDTreeTabsToggle
+" Go to previous (last accessed) window.
+"autocmd VimEnter * wincmd p
+
+let g:nerdtree_tabs_open_on_new_tab = 1
+
+let g:NERDTreeWinSize=30
+
